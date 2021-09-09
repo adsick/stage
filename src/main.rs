@@ -47,8 +47,8 @@ where
     //let mut voices: Vec<Sine> = fb.fav(&[(440.0, 1.0), (880.0, 0.5)]); //old "voices"
 
     let mut voices: Vec<Voice> = vec![
-        Voice::sin(55.0, sr as u32, 2.0),
-        Voice::saw(110.0, sr as u32, 5.0),
+        //Voice::sin(55.0, sr as u32, 2.0),
+        Voice::square(20.0, sr as u32, 4.0),
     ];
 
     // let mut signals: Vec<Box<dyn Signal>> = vec![Box::new(WaveSignal::sin(250.0, sr as u32))];
@@ -61,7 +61,8 @@ where
         //     //dbg!(&voices);
         // }
 
-        let vs: f32 = voices.iter_mut().map(|s| s.sample()).sum();
+        let mut c = 0;
+        let vs: f32 = voices.iter_mut().map(|s| {c+=1; s.sample()}).sum::<f32>()/c as f32;
         //let ss: f32 = signals.iter_mut().map(|s| s.sample()).sum();
         vs // + ss
     };
@@ -83,17 +84,17 @@ where
     //by sending closures in there.
     #[allow(unused_must_use)]
     {
-        std::thread::sleep(std::time::Duration::from_millis(2000));
+        //std::thread::sleep(std::time::Duration::from_millis(2000));
 
         sndr.send(Box::new(|v| v.last_mut().unwrap().f = 440.0 * 1.33484));
         println!("1.25");
-        std::thread::sleep(std::time::Duration::from_millis(1000));
+        //std::thread::sleep(std::time::Duration::from_millis(1000));
 
         sndr.send(Box::new(|v| v.last_mut().unwrap().a = 0.0));
         sndr.send(Box::new(|v| v.iter_mut().nth_back(1).unwrap().a = 0.0));
     }
 
-    std::thread::sleep(std::time::Duration::from_millis(6666)); //secret ingridient
+    std::thread::sleep(std::time::Duration::from_millis(8000)); //secret ingridient
 }
 
 fn write_data<T>(output: &mut [T], channels: usize, next_sample: &mut dyn FnMut() -> f32)

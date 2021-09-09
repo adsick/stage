@@ -12,7 +12,7 @@ impl Voice {
     pub fn sin(f: f32, sr: u32, len: f32) -> Voice {
         let sk = len * sr as f32 / 1000.0; //a convenience for using milliseconds
         let mut vca = Envelope::new(10.0 * sk, 40.0 * sk, 0.0, 0.0 * sk);
-        vca.looping = false; //note remove
+        vca.looping = true; //note remove
         let vco = Box::new(WaveSignal::sin(f, sr));
         Voice { vco, vca }
     }
@@ -22,7 +22,15 @@ impl Voice {
         let mut vca = Envelope::new(1.0 * sk, 40.0 * sk, 0.0, 0.0 * sk);
         vca.looping = true;
 
-        let vco = Box::new(WaveSignal::sin(f, sr));
+        let vco = Box::new(WaveSignal::saw(f, sr));
+        Voice { vco, vca }
+    }
+    pub fn square(f: f32, sr: u32, len: f32) -> Voice {
+        let sk = len * sr as f32 / 1000.0; //a convenience for using milliseconds
+        let mut vca = Envelope::new(1.0 * sk, 40.0 * sk, 0.0, 0.0 * sk);
+        vca.looping = true;
+
+        let vco = Box::new(WaveSignal::square(f, sr));
         Voice { vco, vca }
     }
 }

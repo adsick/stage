@@ -18,7 +18,16 @@ impl Wave {
     pub fn saw(sr: u32) -> Self {
         let mut samples = Vec::with_capacity(sr as usize);
         for i in 0..sr {
-            samples.push(i as f32 / sr as f32);
+            samples.push(if i < sr/2 {2.0 * i as f32 / sr as f32} else {-1.0 + (2 * i - sr) as f32/sr as f32});
+        }
+        Wave { samples }
+    }
+
+    //i know this is dumb
+    pub fn square(sr: u32) -> Self{
+        let mut samples = Vec::with_capacity(sr as usize);
+        for i in 0..sr {
+            samples.push(if i < sr/2 {-1.0} else {1.0});
         }
         Wave { samples }
     }
@@ -34,6 +43,12 @@ pub struct WaveSignal {
     sr: u32, // sample rate
 }
 
+// impl Default for WaveSignal{
+//     fn default() -> Self {
+//         Self { wave: Wave{ samples: vec![]}, t: 0.0, pos: 0.0, f: 440.0, tf: 440.0, sr: 44100 }
+//     }
+// }
+
 impl WaveSignal {
     pub fn sin(f: f32, sr: u32) -> Self {
         WaveSignal {
@@ -45,6 +60,29 @@ impl WaveSignal {
             sr,
         }
     }
+
+    pub fn saw(f: f32, sr: u32) -> Self {
+        WaveSignal {
+            wave: Wave::saw(sr),
+            t: 0.0,
+            pos: 0.0,
+            f,
+            tf: f,
+            sr,
+        }
+    }
+
+    pub fn square(f: f32, sr: u32) -> Self {
+        WaveSignal {
+            wave: Wave::square(sr),
+            t: 0.0,
+            pos: 0.0,
+            f,
+            tf: f,
+            sr, 
+        }
+    }
+
 }
 
 impl Signal for WaveSignal {
