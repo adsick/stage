@@ -11,6 +11,8 @@ use stage::{signal::*, voice::Voice, wave::WaveSignal};
 
 fn main() {
     let host = cpal::default_host();
+    
+
 
     let device = host
         .default_output_device()
@@ -39,17 +41,20 @@ where
     let sr = config.sample_rate.0 as f32;
     let channels = config.channels as usize;
 
-    // Produce a sinusoid of maximum amplitude.
     let mut sample_clock = 0f32;
 
-    //let fb = helpers::SineFabric::new(sample_rate);
+    //let sf = helpers::SineFabric::new(sample_rate);
 
-    //let mut voices: Vec<Sine> = fb.fav(&[(440.0, 1.0), (880.0, 0.5)]); //old "voices"
+    //let mut voices: Vec<Sine> = sf.fav(&[(440.0, 1.0), (880.0, 0.5)]); //old "voices"
 
     let mut voices: Vec<Voice> = vec![
-        //Voice::sin(55.0, sr as u32, 2.0),
-        Voice::square(20.0, sr as u32, 4.0),
+        //Voice::sin(440.0, sr as u32, 20.0),
+        Voice::noise(1.0, sr as u32, 200.0),
     ];
+
+    for i in 438..=442{
+        voices.push(Voice::triangle(i as f32, sr as u32, 200.0));
+    }
 
     // let mut signals: Vec<Box<dyn Signal>> = vec![Box::new(WaveSignal::sin(250.0, sr as u32))];
 
@@ -63,6 +68,7 @@ where
 
         let mut c = 0;
         let vs: f32 = voices.iter_mut().map(|s| {c+=1; s.sample()}).sum::<f32>()/c as f32;
+        //let vs: f32 = voices.iter_mut().map(|s| {s.sample()}).sum::<f32>();
         //let ss: f32 = signals.iter_mut().map(|s| s.sample()).sum();
         vs // + ss
     };
